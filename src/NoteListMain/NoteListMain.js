@@ -28,8 +28,8 @@ export default class NoteListMain extends React.Component {
             <li key={Math.random()}>
               <Note
                 id={note.id}
-                name={note.title}
-                modified={note.date_added}
+                name={note.notename}
+                modified={note.date_created}
               />
             </li>
           )}
