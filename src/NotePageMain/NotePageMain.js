@@ -18,7 +18,7 @@ export default class NotePageMain extends React.Component {
 
   render() {
     const { notes } = this.context;
-    console.log(this.context)
+    console.log(notes)
     const { note_id } = this.props.match.params;
     const note = findNote(notes, note_id) || {content: ''};
    
