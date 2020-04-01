@@ -12,6 +12,10 @@ export default class AddNote extends Component {
   }
   static contextType = ApiContext;
 
+  state = {
+    submitted: false
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     const newNote = {
@@ -20,6 +24,10 @@ export default class AddNote extends Component {
       list_id: e.target['note-folder-id'].value,
       date_added: new Date(),
     }
+    this.setState({submitted: true})
+    if(newNote.notecontents.length < 10){
+      return
+    } 
     //console.log(newNote);
     fetch(`${config.API_ENDPOINT}/api/notes`, {
       method: 'POST',
@@ -42,6 +50,23 @@ export default class AddNote extends Component {
       })
   }
 
+  validateContent = () => {
+    if(document.getElementById('note-content-input').value.length < 10){
+      return <p className="error">Content must be more than 10 characters</p>
+    }
+  }
+  validateName =() => {
+    if(document.getElementById('note-name-input').value.length < 3){
+      return <p className="error">Name must be more than 3 characters</p>
+    }
+  }
+
+  validateFolder = () => {
+    if(document.getElementById('note-folder-select').value === null){
+      return <p className="error">Folder must be selected</p>
+    }
+  }
+
   render() {
     const { folders=[] } = this.context;
     //console.log(folders)
@@ -53,19 +78,21 @@ export default class AddNote extends Component {
             <label htmlFor='note-name-input'>
               Name
             </label>
-            <input type='text' id='note-name-input' name='note-name' />
+            <input type='text' id='note-name-input' name='note-name' required/>
+            {this.state.submitted && this.validateName()}
           </div>
           <div className='field'>
             <label htmlFor='note-content-input'>
               Content
             </label>
-            <textarea id='note-content-input' name='note-content' />
+            <textarea id='note-content-input' name='note-content' required/>
+            {this.state.submitted && this.validateContent()}
           </div>
           <div className='field'>
             <label htmlFor='note-folder-select'>
               Folder
             </label>
-            <select id='note-folder-select' name='note-folder-id'>
+            <select id='note-folder-select' name='note-folder-id' required>
               <option value={null}>...</option>
               {folders.map(folder =>
                 <option key={folder.id} value={folder.id}>
@@ -73,6 +100,7 @@ export default class AddNote extends Component {
                 </option>
               )}
             </select>
+            {this.state.submitted && this.validateFolder()}
           </div>
           <div className='buttons'>
             <button type='submit'>
